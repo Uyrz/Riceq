@@ -13,9 +13,20 @@ workflows:
       - name: Install dependencies
         script: |
           npm install  # Or yarn install if you use yarn
+      - name: Ensure ios directory exists
+        script: |
+          if [ ! -d "ios" ]; then
+            echo "The ios directory does not exist. Please ensure it's in your repository."
+            exit 1
+          fi
       - name: Install CocoaPods dependencies
         script: |
-          cd ios && pod install
+          cd ios
+          if [ ! -f "Podfile" ]; then
+            echo "Podfile not found in ios directory. Please ensure CocoaPods is set up properly."
+            exit 1
+          fi
+          pod install
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
